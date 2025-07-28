@@ -35,41 +35,29 @@ namespace BODA.FMS.MES.Data.Entities
         public ProductType ProductType { get; set; } = ProductType.None;
 
         /// <summary>
+        /// 레시피 ID
+        /// </summary>
+        public Guid? RecipeId { get; set; }
+
+        /// <summary>
+        /// 레시피
+        /// </summary>
+        public virtual Recipe? Recipe { get; set; }
+
+        /// <summary>
         /// 활성 상태
         /// </summary>
         public bool IsActive { get; set; } = true;
 
         /// <summary>
-        /// BOM(Bill of Materials) 데이터 (JSON)
+        /// 추가 데이터 (JSON)
         /// </summary>
-        public JsonDocument? BomData { get; set; }
-
-        /// <summary>
-        /// 표준 작업 시간 (분)
-        /// </summary>
-        public decimal StandardWorkTime { get; set; }
+        public JsonDocument? AdditionalData { get; set; }
 
         // Navigation Properties
-        /// <summary>현재 위치</summary>
-        public virtual Location? CurrentLocation { get; set; }
-
-        ///// <summary>
-        ///// 이 제품의 작업 지시 목록
-        ///// </summary>
-        //public virtual ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
-    }
-
-    /// <summary>
-    /// 제품 타입
-    /// </summary>
-    public enum ProductType
-    {
-        None,                // 없음
-        //EmptyPallet,        // 빈 팔레트
-        //FullPallet,        // 완제품 팔레트
-        WeldingProduct,        // 용접 완제품
-        BoltingProduct,        // 볼팅 완제품
-        WeldingMaterial,        // 용접
-        BoltingMaterial,    // 볼팅
+        /// <summary>
+        /// 이 제품의 재고들
+        /// </summary>
+        public virtual ICollection<ProductStock> Stocks { get; set; } = new List<ProductStock>();
     }
 }

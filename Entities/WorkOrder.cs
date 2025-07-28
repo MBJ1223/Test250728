@@ -5,12 +5,12 @@ using System.Text.Json;
 namespace BODA.FMS.MES.Data.Entities
 {
     /// <summary>
-    /// 작업 지시 - 실제 실행될 작업
+    /// 작업 지시 - 개별 제품에 대한 작업
     /// </summary>
     public class WorkOrder : BaseEntity
     {
         /// <summary>
-        /// 작업 지시 번호 (고유 식별자)
+        /// 작업 지시 번호
         /// </summary>
         public string OrderNumber { get; set; } = string.Empty;
 
@@ -20,29 +20,24 @@ namespace BODA.FMS.MES.Data.Entities
         public string OrderName { get; set; } = string.Empty;
 
         /// <summary>
-        /// 제품 ID
+        /// 제품 재고 ID
         /// </summary>
-        public Guid ProductId { get; set; }
+        public Guid ProductStockId { get; set; }
 
         /// <summary>
-        /// 제품
+        /// 제품 재고
         /// </summary>
-        public virtual Product Product { get; set; } = null!;
+        public virtual ProductStock ProductStock { get; set; } = null!;
 
         /// <summary>
-        /// 시나리오 ID
+        /// 레시피 ID
         /// </summary>
-        public Guid ScenarioId { get; set; }
+        public Guid RecipeId { get; set; }
 
         /// <summary>
-        /// 시나리오
+        /// 레시피
         /// </summary>
-        public virtual WorkScenario Scenario { get; set; } = null!;
-
-        /// <summary>
-        /// 수량
-        /// </summary>
-        public int Quantity { get; set; }
+        public virtual Recipe Recipe { get; set; } = null!;
 
         /// <summary>
         /// 작업 지시 상태
@@ -50,9 +45,14 @@ namespace BODA.FMS.MES.Data.Entities
         public WorkOrderStatus Status { get; set; } = WorkOrderStatus.Created;
 
         /// <summary>
-        /// 우선순위 (1-100, 높을수록 우선)
+        /// 우선순위 (1-100)
         /// </summary>
         public int Priority { get; set; } = 50;
+
+        /// <summary>
+        /// 현재 레시피 단계
+        /// </summary>
+        public int CurrentRecipeStep { get; set; } = 1;
 
         /// <summary>
         /// 예정 시작 시간
@@ -75,11 +75,6 @@ namespace BODA.FMS.MES.Data.Entities
         public DateTime? ActualEndTime { get; set; }
 
         /// <summary>
-        /// 현재 실행 중인 단계 번호
-        /// </summary>
-        public int? CurrentStepNumber { get; set; }
-
-        /// <summary>
         /// 진행률 (0-100)
         /// </summary>
         public decimal ProgressPercentage { get; set; } = 0;
@@ -94,10 +89,11 @@ namespace BODA.FMS.MES.Data.Entities
         /// </summary>
         public string? Remarks { get; set; }
 
+        // Navigation Properties
         /// <summary>
-        /// 작업 지시 실행 기록
+        /// 공정 실행 기록
         /// </summary>
-        public virtual ICollection<WorkOrderExecution> Executions { get; set; } = new List<WorkOrderExecution>();
+        public virtual ICollection<ProcessExecution> ProcessExecutions { get; set; } = new List<ProcessExecution>();
 
         /// <summary>
         /// 작업 지시 로그

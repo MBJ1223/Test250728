@@ -13,10 +13,15 @@ namespace BODA.FMS.MES.Data
 
         // DbSets
         public DbSet<Product> Products { get; set; } = null!;
-        public DbSet<WorkScenario> WorkScenarios { get; set; } = null!;
-        public DbSet<WorkScenarioStep> WorkScenarioSteps { get; set; } = null!;
+        public DbSet<ProductStock> ProductStocks { get; set; } = null!;
+        public DbSet<Recipe> Recipes { get; set; } = null!;
+        public DbSet<RecipeStep> RecipeSteps { get; set; } = null!;
         public DbSet<WorkOrder> WorkOrders { get; set; } = null!;
-        public DbSet<WorkOrderExecution> WorkOrderExecutions { get; set; } = null!;
+        public DbSet<ProcessExecution> ProcessExecutions { get; set; } = null!;
+        public DbSet<Location> Locations { get; set; } = null!;
+        public DbSet<Pallet> Pallets { get; set; } = null!;
+        public DbSet<PalletLocation> PalletLocations { get; set; } = null!;
+        public DbSet<PalletHistory> PalletHistories { get; set; } = null!;
         public DbSet<ExecutionLog> ExecutionLogs { get; set; } = null!;
         public DbSet<SystemIntegration> SystemIntegrations { get; set; } = null!;
         public DbSet<IntegrationLog> IntegrationLogs { get; set; } = null!;
@@ -27,6 +32,10 @@ namespace BODA.FMS.MES.Data
 
             // 모든 Configuration 적용
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // ExecutionLog의 WorkOrderExecution 관계 무시 (ProcessExecution으로 대체)
+            modelBuilder.Entity<ExecutionLog>()
+                .Ignore(e => e.WorkOrderExecution);
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

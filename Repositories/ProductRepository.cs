@@ -23,6 +23,14 @@ namespace BODA.FMS.MES.Data.Repositories
                 .FirstOrDefaultAsync(p => p.ProductCode == productCode);
         }
 
+        public async Task<Product?> GetWithRecipeAsync(Guid id)
+        {
+            return await _dbSet
+                .Include(p => p.Recipe)
+                    .ThenInclude(r => r!.Steps)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
         // 활성 제품 조회
         public async Task<IEnumerable<Product>> GetActiveProductsAsync()
         {
@@ -32,11 +40,29 @@ namespace BODA.FMS.MES.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetActiveProductsWithRecipeAsync()
+        {
+            return await _dbSet
+                .Where(p => p.IsActive)
+                .Include(p => p.Recipe)
+                .OrderBy(p => p.ProductCode)
+                .ToListAsync();
+        }
+
         // 제품 타입별 조회
         public async Task<IEnumerable<Product>> GetByTypeAsync(ProductType productType)
         {
             return await _dbSet
                 .Where(p => p.ProductType == productType && p.IsActive)
+                .OrderBy(p => p.ProductCode)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetByTypeWithRecipeAsync(ProductType productType)
+        {
+            return await _dbSet
+                .Where(p => p.ProductType == productType && p.IsActive)
+                .Include(p => p.Recipe)
                 .OrderBy(p => p.ProductCode)
                 .ToListAsync();
         }
@@ -58,11 +84,19 @@ namespace BODA.FMS.MES.Data.Repositories
                 .ToListAsync();
         }
 
-        // BOM 포함 제품 조회
-        public async Task<IEnumerable<Product>> GetProductsWithBomAsync()
+        // 레시피별 제품 조회
+        public async Task<IEnumerable<Product>> GetByRecipeAsync(Guid recipeId)
         {
             return await _dbSet
-                .Where(p => p.BomData != null && p.IsActive)
+                .Where(p => p.RecipeId == recipeId)
+                .OrderBy(p => p.ProductCode)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsWithoutRecipeAsync()
+        {
+            return await _dbSet
+                .Where(p => p.RecipeId == null && p.IsActive)
                 .OrderBy(p => p.ProductCode)
                 .ToListAsync();
         }
@@ -70,14 +104,14 @@ namespace BODA.FMS.MES.Data.Repositories
         // 제품 사용 여부 확인
         public async Task<bool> IsProductInUseAsync(Guid productId)
         {
-            return await _context.WorkOrders
-                .AnyAsync(w => w.ProductId == productId);
+            return await _context.ProductStocks
+                .AnyAsync(s => s.ProductId == productId);
         }
 
-        public async Task<int> GetUsageCountAsync(Guid productId)
+        public async Task<int> GetStockCountAsync(Guid productId)
         {
-            return await _context.WorkOrders
-                .CountAsync(w => w.ProductId == productId);
+            return await _context.ProductStocks
+                .CountAsync(s => s.ProductId == productId);
         }
 
         // 제품 활성화/비활성화
@@ -99,18 +133,15 @@ namespace BODA.FMS.MES.Data.Repositories
             if (product == null)
                 return false;
 
-            // 사용 중인지 확인
-            if (await IsProductInUseAsync(productId))
-            {
-                // 진행 중인 작업이 있는지 확인
-                var hasActiveOrders = await _context.WorkOrders
-                    .AnyAsync(w => w.ProductId == productId &&
-                                  (w.Status == WorkOrderStatus.InProgress ||
-                                   w.Status == WorkOrderStatus.Scheduled));
+            // 사용 가능한 재고가 있는지 확인
+            var hasAvailableStock = await _context.ProductStocks
+                .AnyAsync(s => s.ProductId == productId &&
+                             (s.Status == StockStatus.Available ||
+                              s.Status == StockStatus.Reserved ||
+                              s.Status == StockStatus.InProcess));
 
-                if (hasActiveOrders)
-                    return false; // 진행 중인 작업이 있으면 비활성화 불가
-            }
+            if (hasAvailableStock)
+                return false; // 사용 가능한 재고가 있으면 비활성화 불가
 
             product.IsActive = false;
             Update(product);
@@ -129,6 +160,39 @@ namespace BODA.FMS.MES.Data.Repositories
             }
 
             return await query.AnyAsync();
+        }
+
+        // 레시피 연결
+        public async Task<bool> AssignRecipeAsync(Guid productId, Guid recipeId)
+        {
+            var product = await GetByIdAsync(productId);
+            if (product == null)
+                return false;
+
+            var recipe = await _context.Recipes.FindAsync(recipeId);
+            if (recipe == null || !recipe.IsActive)
+                return false;
+
+            // 제품 타입과 레시피 타입이 일치하는지 확인
+            if (product.ProductType != recipe.ProductType)
+                return false;
+
+            product.RecipeId = recipeId;
+            Update(product);
+            await SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveRecipeAsync(Guid productId)
+        {
+            var product = await GetByIdAsync(productId);
+            if (product == null)
+                return false;
+
+            product.RecipeId = null;
+            Update(product);
+            await SaveChangesAsync();
+            return true;
         }
     }
 }

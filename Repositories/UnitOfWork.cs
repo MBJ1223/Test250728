@@ -16,11 +16,15 @@ namespace BODA.FMS.MES.Data.Repositories
 
         // Repository instances
         private IProductRepository? _products;
-        private IWorkScenarioRepository? _workScenarios;
+        private IProductStockRepository? _productStocks;
+        private IRecipeRepository? _recipes;
         private IWorkOrderRepository? _workOrders;
-        private IWorkOrderExecutionRepository? _workOrderExecutions;
+        private IProcessExecutionRepository? _processExecutions;
+        private ILocationRepository? _locations;
+        private IPalletRepository? _pallets;
         private ISystemIntegrationRepository? _systemIntegrations;
         private IExecutionLogRepository? _executionLogs;
+        private IIntegrationLogRepository? _integrationLogs;
 
         public UnitOfWork(MesDbContext context)
         {
@@ -31,20 +35,32 @@ namespace BODA.FMS.MES.Data.Repositories
         public IProductRepository Products =>
             _products ??= new ProductRepository(_context);
 
-        public IWorkScenarioRepository WorkScenarios =>
-            _workScenarios ??= new WorkScenarioRepository(_context);
+        public IProductStockRepository ProductStocks =>
+            _productStocks ??= new ProductStockRepository(_context);
+
+        public IRecipeRepository Recipes =>
+            _recipes ??= new RecipeRepository(_context);
 
         public IWorkOrderRepository WorkOrders =>
             _workOrders ??= new WorkOrderRepository(_context);
 
-        public IWorkOrderExecutionRepository WorkOrderExecutions =>
-            _workOrderExecutions ??= new WorkOrderExecutionRepository(_context);
+        public IProcessExecutionRepository ProcessExecutions =>
+            _processExecutions ??= new ProcessExecutionRepository(_context);
+
+        public ILocationRepository Locations =>
+            _locations ??= new LocationRepository(_context);
+
+        public IPalletRepository Pallets =>
+            _pallets ??= new PalletRepository(_context);
 
         public ISystemIntegrationRepository SystemIntegrations =>
             _systemIntegrations ??= new SystemIntegrationRepository(_context);
 
         public IExecutionLogRepository ExecutionLogs =>
             _executionLogs ??= new ExecutionLogRepository(_context);
+
+        public IIntegrationLogRepository IntegrationLogs =>
+            _integrationLogs ??= new IntegrationLogRepository(_context);
 
         // Transaction Management
         public async Task<int> SaveChangesAsync()

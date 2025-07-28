@@ -32,20 +32,19 @@ namespace BODA.FMS.MES.Data.Configurations
                 .HasDefaultValue("EA");
 
             builder.Property(e => e.ProductType)
-                .ConfigureEnumAsString(50, "제품 타입 (None, WeldingProduct, BoltingProduct, WeldingMaterial, BoltingMaterial)")   
+                .ConfigureEnumAsString(50, "제품 타입")
                 .HasDefaultValue(ProductType.None);
+
+            builder.Property(e => e.RecipeId)
+                .HasComment("레시피 ID");
 
             builder.Property(e => e.IsActive)
                 .IsRequired()
                 .HasDefaultValue(true)
                 .HasComment("활성 상태");
 
-            builder.Property(e => e.BomData)
-                .ConfigureJson("JSON", "BOM 정보 (JSON 형태)");
-
-            builder.Property(e => e.StandardWorkTime)
-                .ConfigureDecimal(10, 2, "표준 작업 시간 (분)")
-                .HasDefaultValue(0);
+            builder.Property(e => e.AdditionalData)
+                .ConfigureJson("JSON", "추가 데이터");
 
             // 인덱스 설정
             builder.HasIndex(e => e.ProductCode)
@@ -60,6 +59,21 @@ namespace BODA.FMS.MES.Data.Configurations
 
             builder.HasIndex(e => new { e.IsActive, e.ProductType })
                 .HasDatabaseName("idx_products_active_type");
+
+            builder.HasIndex(e => e.RecipeId)
+                .HasDatabaseName("idx_products_recipe")
+                .HasFilter("RecipeId IS NOT NULL");
+
+            // 관계 설정
+            builder.HasOne(e => e.Recipe)
+                .WithMany(r => r.Products)
+                .HasForeignKey(e => e.RecipeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasMany(e => e.Stocks)
+                .WithOne(s => s.Product)
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

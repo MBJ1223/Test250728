@@ -18,23 +18,18 @@ namespace BODA.FMS.MES.Data.Configurations
 
             // 속성 설정
             builder.Property(e => e.OrderNumber)
-                .IsRequiredString(50, "작업 지시 번호 (고유 식별자)");
+                .IsRequiredString(50, "작업 지시 번호");
 
             builder.Property(e => e.OrderName)
                 .IsRequiredString(200, "작업 지시명");
 
-            builder.Property(e => e.ProductId)
+            builder.Property(e => e.ProductStockId)
                 .IsRequired()
-                .HasComment("제품 ID");
+                .HasComment("제품 재고 ID");
 
-            builder.Property(e => e.ScenarioId)
+            builder.Property(e => e.RecipeId)
                 .IsRequired()
-                .HasComment("시나리오 ID");
-
-            builder.Property(e => e.Quantity)
-                .IsRequired()
-                .HasDefaultValue(1)
-                .HasComment("수량");
+                .HasComment("레시피 ID");
 
             builder.Property(e => e.Status)
                 .ConfigureEnumAsString(20, "작업 지시 상태")
@@ -43,7 +38,12 @@ namespace BODA.FMS.MES.Data.Configurations
             builder.Property(e => e.Priority)
                 .IsRequired()
                 .HasDefaultValue(50)
-                .HasComment("우선순위 (1-100, 높을수록 우선)");
+                .HasComment("우선순위 (1-100)");
+
+            builder.Property(e => e.CurrentRecipeStep)
+                .IsRequired()
+                .HasDefaultValue(1)
+                .HasComment("현재 레시피 단계");
 
             builder.Property(e => e.ScheduledStartTime)
                 .HasComment("예정 시작 시간");
@@ -57,15 +57,12 @@ namespace BODA.FMS.MES.Data.Configurations
             builder.Property(e => e.ActualEndTime)
                 .HasComment("실제 종료 시간");
 
-            builder.Property(e => e.CurrentStepNumber)
-                .HasComment("현재 실행 중인 단계 번호");
-
             builder.Property(e => e.ProgressPercentage)
                 .ConfigureDecimal(5, 2, "진행률 (0-100)")
                 .HasDefaultValue(0);
 
             builder.Property(e => e.Parameters)
-                .ConfigureJson("JSON", "작업 파라미터 (JSON)");
+                .ConfigureJson("JSON", "작업 파라미터");
 
             builder.Property(e => e.Remarks)
                 .HasColumnType("TEXT")
@@ -86,39 +83,39 @@ namespace BODA.FMS.MES.Data.Configurations
                 .HasDatabaseName("idx_workorders_status_priority")
                 .HasFilter($"Status IN ('{WorkOrderStatus.Created}', '{WorkOrderStatus.Scheduled}', '{WorkOrderStatus.InProgress}')");
 
-            builder.HasIndex(e => e.ProductId)
-                .HasDatabaseName("idx_workorders_product");
+            builder.HasIndex(e => e.ProductStockId)
+                .HasDatabaseName("idx_workorders_stock");
 
-            builder.HasIndex(e => e.ScenarioId)
-                .HasDatabaseName("idx_workorders_scenario");
+            builder.HasIndex(e => e.RecipeId)
+                .HasDatabaseName("idx_workorders_recipe");
 
             builder.HasIndex(e => e.ScheduledStartTime)
                 .HasDatabaseName("idx_workorders_scheduled")
                 .HasFilter("ScheduledStartTime IS NOT NULL");
 
-            //// 관계 설정
-            //builder.HasOne(e => e.Product)
-            //    .WithMany(p => p.WorkOrders)
-            //    .HasForeignKey(e => e.ProductId)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            builder.HasIndex(e => e.CurrentRecipeStep)
+                .HasDatabaseName("idx_workorders_current_step");
 
-            builder.HasOne(e => e.Scenario)
+            // 관계 설정
+            builder.HasOne(e => e.ProductStock)
                 .WithMany(s => s.WorkOrders)
-                .HasForeignKey(e => e.ScenarioId)
+                .HasForeignKey(e => e.ProductStockId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(e => e.Executions)
-                .WithOne(ex => ex.WorkOrder)
-                .HasForeignKey(ex => ex.WorkOrderId)
+            builder.HasOne(e => e.Recipe)
+                .WithMany(r => r.WorkOrders)
+                .HasForeignKey(e => e.RecipeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(e => e.ProcessExecutions)
+                .WithOne(p => p.WorkOrder)
+                .HasForeignKey(p => p.WorkOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(e => e.Logs)
                 .WithOne(l => l.WorkOrder)
                 .HasForeignKey(l => l.WorkOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // 계산된 속성은 무시
-            //builder.Ignore(e => e.GetDuration());
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json;
 
 namespace BODA.FMS.MES.Data.Entities
 {
     /// <summary>
-    /// 작업 지시 실행 - 각 시나리오 단계의 실행 기록
+    /// 공정 실행 기록
     /// </summary>
-    public class WorkOrderExecution : BaseEntity
+    public class ProcessExecution : BaseEntity
     {
         /// <summary>
         /// 작업 지시 ID
@@ -20,14 +19,24 @@ namespace BODA.FMS.MES.Data.Entities
         public virtual WorkOrder WorkOrder { get; set; } = null!;
 
         /// <summary>
-        /// 시나리오 단계 ID
+        /// 제품 재고 ID
         /// </summary>
-        public Guid ScenarioStepId { get; set; }
+        public Guid ProductStockId { get; set; }
 
         /// <summary>
-        /// 시나리오 단계
+        /// 제품 재고
         /// </summary>
-        public virtual WorkScenarioStep ScenarioStep { get; set; } = null!;
+        public virtual ProductStock ProductStock { get; set; } = null!;
+
+        /// <summary>
+        /// 레시피 단계 ID
+        /// </summary>
+        public Guid RecipeStepId { get; set; }
+
+        /// <summary>
+        /// 레시피 단계
+        /// </summary>
+        public virtual RecipeStep RecipeStep { get; set; } = null!;
 
         /// <summary>
         /// 실행 상태
@@ -35,7 +44,27 @@ namespace BODA.FMS.MES.Data.Entities
         public ExecutionStatus Status { get; set; } = ExecutionStatus.Pending;
 
         /// <summary>
-        /// 할당된 리소스 (예: THIRA_01, WELDING_STATION_01)
+        /// 시작 위치 ID
+        /// </summary>
+        public int? StartLocationId { get; set; }
+
+        /// <summary>
+        /// 시작 위치
+        /// </summary>
+        public virtual Location? StartLocation { get; set; }
+
+        /// <summary>
+        /// 종료 위치 ID
+        /// </summary>
+        public int? EndLocationId { get; set; }
+
+        /// <summary>
+        /// 종료 위치
+        /// </summary>
+        public virtual Location? EndLocation { get; set; }
+
+        /// <summary>
+        /// 할당된 리소스 (AMR, Station 등)
         /// </summary>
         public string? AssignedResource { get; set; }
 
@@ -50,13 +79,7 @@ namespace BODA.FMS.MES.Data.Entities
         public DateTime? EndTime { get; set; }
 
         /// <summary>
-        /// 재시도 횟수
-        /// </summary>
-        public int RetryCount { get; set; } = 0;
-
-        /// <summary>
         /// 실행 데이터 (JSON)
-        /// 요청/응답 데이터, 중간 결과 등
         /// </summary>
         public JsonDocument? ExecutionData { get; set; }
 
@@ -71,14 +94,9 @@ namespace BODA.FMS.MES.Data.Entities
         public string? ErrorMessage { get; set; }
 
         /// <summary>
-        /// 오류 상세 (스택 트레이스 등)
+        /// 재시도 횟수
         /// </summary>
-        public string? ErrorDetail { get; set; }
-
-        /// <summary>
-        /// 실행 로그
-        /// </summary>
-        public virtual ICollection<ExecutionLog> Logs { get; set; } = new List<ExecutionLog>();
+        public int RetryCount { get; set; } = 0;
 
         /// <summary>
         /// 소요 시간 계산
@@ -90,31 +108,6 @@ namespace BODA.FMS.MES.Data.Entities
                 return EndTime.Value - StartTime.Value;
             }
             return null;
-        }
-
-        /// <summary>
-        /// 실행 컨텍스트 설정
-        /// </summary>
-        public void SetExecutionContext(string key, object value)
-        {
-            if (ExecutionData == null)
-            {
-                var doc = new Dictionary<string, object>();
-                ExecutionData = JsonSerializer.SerializeToDocument(doc);
-            }
-
-            // JSON 수정 로직 구현 필요
-        }
-
-        /// <summary>
-        /// 실행 컨텍스트 가져오기
-        /// </summary>
-        public T? GetExecutionContext<T>(string key)
-        {
-            if (ExecutionData == null) return default;
-
-            // JSON 파싱 로직 구현 필요
-            return default;
         }
     }
 }

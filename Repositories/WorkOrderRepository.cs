@@ -20,8 +20,9 @@ namespace BODA.FMS.MES.Data.Repositories
         public async Task<WorkOrder?> GetByOrderNumberAsync(string orderNumber)
         {
             return await _dbSet
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .FirstOrDefaultAsync(w => w.OrderNumber == orderNumber);
         }
 
@@ -29,11 +30,16 @@ namespace BODA.FMS.MES.Data.Repositories
         public async Task<WorkOrder?> GetWithDetailsAsync(Guid id)
         {
             return await _dbSet
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
-                    .ThenInclude(s => s.Steps)
-                .Include(w => w.Executions)
-                    .ThenInclude(e => e.ScenarioStep)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Pallet)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.CurrentLocation)
+                .Include(w => w.Recipe)
+                    .ThenInclude(r => r.Steps)
+                .Include(w => w.ProcessExecutions)
+                    .ThenInclude(e => e.RecipeStep)
                 .Include(w => w.Logs)
                 .FirstOrDefaultAsync(w => w.Id == id);
         }
@@ -41,8 +47,8 @@ namespace BODA.FMS.MES.Data.Repositories
         public async Task<WorkOrder?> GetWithExecutionsAsync(Guid id)
         {
             return await _dbSet
-                .Include(w => w.Executions)
-                    .ThenInclude(e => e.ScenarioStep)
+                .Include(w => w.ProcessExecutions)
+                    .ThenInclude(e => e.RecipeStep)
                 .FirstOrDefaultAsync(w => w.Id == id);
         }
 
@@ -51,8 +57,9 @@ namespace BODA.FMS.MES.Data.Repositories
         {
             return await _dbSet
                 .Where(w => w.Status == status)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderByDescending(w => w.Priority)
                 .ThenBy(w => w.CreatedAt)
                 .ToListAsync();
@@ -68,8 +75,9 @@ namespace BODA.FMS.MES.Data.Repositories
 
             return await _dbSet
                 .Where(w => activeStatuses.Contains(w.Status))
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderByDescending(w => w.Priority)
                 .ThenBy(w => w.CreatedAt)
                 .ToListAsync();
@@ -84,10 +92,46 @@ namespace BODA.FMS.MES.Data.Repositories
 
             return await _dbSet
                 .Where(w => pendingStatuses.Contains(w.Status))
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderByDescending(w => w.Priority)
                 .ThenBy(w => w.ScheduledStartTime ?? w.CreatedAt)
+                .ToListAsync();
+        }
+
+        // 재고별 조회
+        public async Task<IEnumerable<WorkOrder>> GetByProductStockAsync(Guid productStockId)
+        {
+            return await _dbSet
+                .Where(w => w.ProductStockId == productStockId)
+                .Include(w => w.Recipe)
+                .OrderByDescending(w => w.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<WorkOrder?> GetActiveOrderByStockAsync(Guid productStockId)
+        {
+            var activeStatuses = new[] {
+                WorkOrderStatus.Created,
+                WorkOrderStatus.Scheduled,
+                WorkOrderStatus.InProgress
+            };
+
+            return await _dbSet
+                .Where(w => w.ProductStockId == productStockId && activeStatuses.Contains(w.Status))
+                .Include(w => w.Recipe)
+                .FirstOrDefaultAsync();
+        }
+
+        // 레시피별 조회
+        public async Task<IEnumerable<WorkOrder>> GetByRecipeAsync(Guid recipeId)
+        {
+            return await _dbSet
+                .Where(w => w.RecipeId == recipeId)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .OrderByDescending(w => w.CreatedAt)
                 .ToListAsync();
         }
 
@@ -98,8 +142,9 @@ namespace BODA.FMS.MES.Data.Repositories
                 .Where(w => w.Priority >= threshold &&
                            (w.Status == WorkOrderStatus.Created ||
                             w.Status == WorkOrderStatus.Scheduled))
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderByDescending(w => w.Priority)
                 .ThenBy(w => w.CreatedAt)
                 .ToListAsync();
@@ -114,8 +159,9 @@ namespace BODA.FMS.MES.Data.Repositories
             return await _dbSet
                 .Where(w => w.ScheduledStartTime >= startOfDay &&
                            w.ScheduledStartTime <= endOfDay)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderBy(w => w.ScheduledStartTime)
                 .ToListAsync();
         }
@@ -125,31 +171,10 @@ namespace BODA.FMS.MES.Data.Repositories
             return await _dbSet
                 .Where(w => (w.ActualStartTime >= startDate && w.ActualStartTime <= endDate) ||
                            (w.ScheduledStartTime >= startDate && w.ScheduledStartTime <= endDate))
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderBy(w => w.ScheduledStartTime ?? w.ActualStartTime)
-                .ToListAsync();
-        }
-
-        // 제품별 조회
-        public async Task<IEnumerable<WorkOrder>> GetByProductAsync(Guid productId)
-        {
-            return await _dbSet
-                .Where(w => w.ProductId == productId)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
-                .OrderByDescending(w => w.CreatedAt)
-                .ToListAsync();
-        }
-
-        // 시나리오별 조회
-        public async Task<IEnumerable<WorkOrder>> GetByScenarioAsync(Guid scenarioId)
-        {
-            return await _dbSet
-                .Where(w => w.ScenarioId == scenarioId)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
-                .OrderByDescending(w => w.CreatedAt)
                 .ToListAsync();
         }
 
@@ -157,10 +182,11 @@ namespace BODA.FMS.MES.Data.Repositories
         public async Task<IEnumerable<WorkOrder>> GetByCurrentStepAsync(int stepNumber)
         {
             return await _dbSet
-                .Where(w => w.CurrentStepNumber == stepNumber &&
+                .Where(w => w.CurrentRecipeStep == stepNumber &&
                            w.Status == WorkOrderStatus.InProgress)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .ToListAsync();
         }
 
@@ -170,8 +196,9 @@ namespace BODA.FMS.MES.Data.Repositories
             return await _dbSet
                 .Where(w => w.ProgressPercentage >= minProgress &&
                            w.ProgressPercentage <= maxProgress)
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
                 .OrderBy(w => w.ProgressPercentage)
                 .ToListAsync();
         }
@@ -185,9 +212,10 @@ namespace BODA.FMS.MES.Data.Repositories
                 .Where(w => (w.Status == WorkOrderStatus.Created ||
                             w.Status == WorkOrderStatus.Scheduled) &&
                            (w.ScheduledStartTime == null || w.ScheduledStartTime <= now))
-                .Include(w => w.Product)
-                .Include(w => w.Scenario)
-                    .ThenInclude(s => s.Steps)
+                .Include(w => w.ProductStock)
+                    .ThenInclude(s => s.Product)
+                .Include(w => w.Recipe)
+                    .ThenInclude(r => r.Steps)
                 .OrderByDescending(w => w.Priority)
                 .ThenBy(w => w.ScheduledStartTime ?? w.CreatedAt)
                 .FirstOrDefaultAsync();
@@ -299,12 +327,28 @@ namespace BODA.FMS.MES.Data.Repositories
                 case WorkOrderStatus.Completed:
                     workOrder.ActualEndTime = DateTime.UtcNow;
                     workOrder.ProgressPercentage = 100;
+
+                    // 재고 상태 업데이트
+                    var stock = await _context.ProductStocks.FindAsync(workOrder.ProductStockId);
+                    if (stock != null)
+                    {
+                        stock.Status = StockStatus.Completed;
+                        _context.ProductStocks.Update(stock);
+                    }
                     break;
 
                 case WorkOrderStatus.Cancelled:
                 case WorkOrderStatus.Failed:
                     if (!workOrder.ActualEndTime.HasValue)
                         workOrder.ActualEndTime = DateTime.UtcNow;
+
+                    // 재고 상태 원복
+                    var failedStock = await _context.ProductStocks.FindAsync(workOrder.ProductStockId);
+                    if (failedStock != null && failedStock.Status == StockStatus.InProcess)
+                    {
+                        failedStock.Status = StockStatus.Available;
+                        _context.ProductStocks.Update(failedStock);
+                    }
                     break;
             }
 
@@ -319,10 +363,73 @@ namespace BODA.FMS.MES.Data.Repositories
             var workOrder = await GetByIdAsync(workOrderId);
             if (workOrder != null)
             {
-                workOrder.CurrentStepNumber = stepNumber;
+                workOrder.CurrentRecipeStep = stepNumber;
+
+                // 진행률 계산
+                var recipe = await _context.Recipes
+                    .Include(r => r.Steps)
+                    .FirstOrDefaultAsync(r => r.Id == workOrder.RecipeId);
+
+                if (recipe != null && recipe.Steps.Any())
+                {
+                    var totalSteps = recipe.Steps.Count;
+                    workOrder.ProgressPercentage = (decimal)(stepNumber - 1) / totalSteps * 100;
+                }
+
                 Update(workOrder);
                 await SaveChangesAsync();
             }
+        }
+
+        // 작업 지시 생성
+        public async Task<WorkOrder> CreateWorkOrderAsync(ProductStock productStock, Recipe recipe, int priority = 50)
+        {
+            var orderNumber = await GenerateOrderNumberAsync();
+
+            var workOrder = new WorkOrder
+            {
+                OrderNumber = orderNumber,
+                OrderName = $"{productStock.Product.ProductName} - {recipe.RecipeName}",
+                ProductStockId = productStock.Id,
+                ProductStock = productStock,
+                RecipeId = recipe.Id,
+                Recipe = recipe,
+                Status = WorkOrderStatus.Created,
+                Priority = priority,
+                CurrentRecipeStep = 1,
+                ProgressPercentage = 0,
+                CreatedBy = "System"
+            };
+
+            // 예상 종료 시간 계산
+            if (workOrder.ScheduledStartTime.HasValue)
+            {
+                workOrder.ScheduledEndTime = workOrder.ScheduledStartTime.Value.AddMinutes(recipe.TotalEstimatedMinutes);
+            }
+
+            await AddAsync(workOrder);
+
+            // 재고 예약
+            productStock.Status = StockStatus.Reserved;
+            _context.ProductStocks.Update(productStock);
+
+            // 공정 실행 레코드 생성
+            foreach (var step in recipe.Steps.OrderBy(s => s.StepNumber))
+            {
+                var execution = new ProcessExecution
+                {
+                    WorkOrderId = workOrder.Id,
+                    ProductStockId = productStock.Id,
+                    RecipeStepId = step.Id,
+                    Status = ExecutionStatus.Pending,
+                    CreatedBy = "System"
+                };
+
+                _context.ProcessExecutions.Add(execution);
+            }
+
+            await SaveChangesAsync();
+            return workOrder;
         }
     }
 }

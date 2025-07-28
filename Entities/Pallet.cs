@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BODA.FMS.MES.Data.Entities
 {
@@ -16,8 +13,8 @@ namespace BODA.FMS.MES.Data.Entities
         /// <summary>팔레트 바코드/RFID</summary>
         public string PalletCode { get; set; } = string.Empty;
 
-        /// <summary>팔레트 타입 (예: Standard, Heavy, Special)</summary>
-        public string PalletType { get; set; } = string.Empty;
+        /// <summary>팔레트 타입</summary>
+        public string PalletType { get; set; } = "Standard";
 
         /// <summary>현재 상태</summary>
         public PalletStatus Status { get; set; } = PalletStatus.Available;
@@ -25,14 +22,11 @@ namespace BODA.FMS.MES.Data.Entities
         /// <summary>현재 위치 ID</summary>
         public int? CurrentLocationId { get; set; }
 
-        /// <summary>적재된 자재 ID</summary>
-        public int? MaterialId { get; set; }
+        /// <summary>최대 적재 슬롯 수</summary>
+        public int MaxSlots { get; set; } = 2;
 
-        /// <summary>최대 적재 중량 (kg)</summary>
-        public decimal MaxWeight { get; set; }
-
-        /// <summary>현재 적재 중량 (kg)</summary>
-        public decimal CurrentWeight { get; set; }
+        /// <summary>현재 적재된 제품 수</summary>
+        public int CurrentProductCount { get; set; } = 0;
 
         /// <summary>사용 횟수</summary>
         public int UsageCount { get; set; }
@@ -53,11 +47,24 @@ namespace BODA.FMS.MES.Data.Entities
         /// <summary>현재 위치</summary>
         public virtual Location? CurrentLocation { get; set; }
 
+        /// <summary>팔레트에 적재된 제품들</summary>
+        public virtual ICollection<ProductStock> ProductStocks { get; set; } = new List<ProductStock>();
+
         /// <summary>위치 이력</summary>
         public virtual ICollection<PalletLocation> LocationHistory { get; set; } = new List<PalletLocation>();
 
         /// <summary>상태 변경 이력</summary>
         public virtual ICollection<PalletHistory> StatusHistory { get; set; } = new List<PalletHistory>();
+
+        /// <summary>
+        /// 팔레트가 가득 찼는지 확인
+        /// </summary>
+        public bool IsFull => CurrentProductCount >= MaxSlots;
+
+        /// <summary>
+        /// 팔레트가 비어있는지 확인
+        /// </summary>
+        public bool IsEmpty => CurrentProductCount == 0;
     }
 
     /// <summary>

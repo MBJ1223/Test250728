@@ -19,8 +19,15 @@ namespace BODA.FMS.MES.Data.Repositories
 
         // 상태별 조회
         Task<IEnumerable<WorkOrder>> GetByStatusAsync(WorkOrderStatus status);
-        Task<IEnumerable<WorkOrder>> GetActiveOrdersAsync(); // Created, Scheduled, InProgress
-        Task<IEnumerable<WorkOrder>> GetPendingOrdersAsync(); // Created, Scheduled
+        Task<IEnumerable<WorkOrder>> GetActiveOrdersAsync();
+        Task<IEnumerable<WorkOrder>> GetPendingOrdersAsync();
+
+        // 재고별 조회
+        Task<IEnumerable<WorkOrder>> GetByProductStockAsync(Guid productStockId);
+        Task<WorkOrder?> GetActiveOrderByStockAsync(Guid productStockId);
+
+        // 레시피별 조회
+        Task<IEnumerable<WorkOrder>> GetByRecipeAsync(Guid recipeId);
 
         // 우선순위별 조회
         Task<IEnumerable<WorkOrder>> GetHighPriorityOrdersAsync(int threshold = 70);
@@ -28,12 +35,6 @@ namespace BODA.FMS.MES.Data.Repositories
         // 날짜별 조회
         Task<IEnumerable<WorkOrder>> GetScheduledOrdersAsync(DateTime date);
         Task<IEnumerable<WorkOrder>> GetOrdersInDateRangeAsync(DateTime startDate, DateTime endDate);
-
-        // 제품별 조회
-        Task<IEnumerable<WorkOrder>> GetByProductAsync(Guid productId);
-
-        // 시나리오별 조회
-        Task<IEnumerable<WorkOrder>> GetByScenarioAsync(Guid scenarioId);
 
         // 현재 단계별 조회
         Task<IEnumerable<WorkOrder>> GetByCurrentStepAsync(int stepNumber);
@@ -60,5 +61,8 @@ namespace BODA.FMS.MES.Data.Repositories
 
         // 현재 단계 업데이트
         Task UpdateCurrentStepAsync(Guid workOrderId, int stepNumber);
+
+        // 작업 지시 생성
+        Task<WorkOrder> CreateWorkOrderAsync(ProductStock productStock, Recipe recipe, int priority = 50);
     }
 }
