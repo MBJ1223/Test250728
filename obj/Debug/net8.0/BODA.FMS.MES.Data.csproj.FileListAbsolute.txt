@@ -1,0 +1,29 @@
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.deps.json
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.runtimeconfig.json
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.pdb
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.csproj.AssemblyReference.cache
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.AssemblyInfoInputs.cache
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.AssemblyInfo.cs
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.csproj.CoreCompileInputs.cache
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\refint\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.pdb
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.genruntimeconfig.cache
+D:\Programing\BODA\Net Aspire\BODA Factory Management System\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\ref\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.deps.json
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.runtimeconfig.json
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\bin\Debug\net8.0\BODA.FMS.MES.Data.pdb
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.csproj.AssemblyReference.cache
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.AssemblyInfoInputs.cache
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.AssemblyInfo.cs
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.csproj.CoreCompileInputs.cache
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.sourcelink.json
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\refint\BODA.FMS.MES.Data.dll
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.pdb
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\BODA.FMS.MES.Data.genruntimeconfig.cache
+D:\Programing\BODA\Net Aspire\BODA.FMS\src\Data\BODA.FMS.MES.Data\obj\Debug\net8.0\ref\BODA.FMS.MES.Data.dll
