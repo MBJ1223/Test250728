@@ -8,8 +8,16 @@ namespace BODA.FMS.MES.Data.Repositories
     /// <summary>
     /// Location Repository 인터페이스
     /// </summary>
-    public interface ILocationRepository : IBaseRepository<Location>
+    public interface ILocationRepository
     {
+        // 기본 CRUD
+        Task<Location?> GetByIdAsync(int id);
+        Task<IEnumerable<Location>> GetAllAsync();
+        Task<Location> AddAsync(Location entity);
+        Location Update(Location entity);
+        Task DeleteAsync(int id);
+        Task<int> SaveChangesAsync();
+
         // 위치 코드로 조회
         Task<Location?> GetByCodeAsync(string locationCode);
 

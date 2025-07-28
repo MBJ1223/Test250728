@@ -144,13 +144,45 @@ namespace BODA.FMS.MES.Data.Seeders
 
         private List<IDataSeeder> GetAllSeeders(IServiceProvider serviceProvider)
         {
-            return new List<IDataSeeder>
+            var seeders = new List<IDataSeeder>();
+
+            // ProductSeeder 추가
+            try
             {
-                serviceProvider.GetRequiredService<ProductSeeder>(),
-                serviceProvider.GetRequiredService<WorkScenarioSeeder>(),
-                serviceProvider.GetRequiredService<SystemIntegrationSeeder>()
-                // 추가 시더가 있으면 여기에 추가
-            };
+                var productSeeder = serviceProvider.GetService<ProductSeeder>();
+                if (productSeeder != null)
+                    seeders.Add(productSeeder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"ProductSeeder를 로드할 수 없습니다: {ex.Message}");
+            }
+
+            // LocationPalletSeeder 추가
+            try
+            {
+                var locationPalletSeeder = serviceProvider.GetService<LocationPalletSeeder>();
+                if (locationPalletSeeder != null)
+                    seeders.Add(locationPalletSeeder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"LocationPalletSeeder를 로드할 수 없습니다: {ex.Message}");
+            }
+
+            // SystemIntegrationSeeder 추가
+            try
+            {
+                var systemSeeder = serviceProvider.GetService<SystemIntegrationSeeder>();
+                if (systemSeeder != null)
+                    seeders.Add(systemSeeder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"SystemIntegrationSeeder를 로드할 수 없습니다: {ex.Message}");
+            }
+
+            return seeders;
         }
     }
 }

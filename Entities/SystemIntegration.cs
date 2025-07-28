@@ -60,27 +60,4 @@ namespace BODA.FMS.MES.Data.Entities
         /// </summary>
         public virtual ICollection<IntegrationLog> IntegrationLogs { get; set; } = new List<IntegrationLog>();
     }
-
-    /// <summary>
-    /// 통합 타입
-    /// </summary>
-    public enum IntegrationType
-    {
-        REST,           // REST API
-        MessageQueue,   // RabbitMQ 등
-        SignalR,        // SignalR 실시간 통신
-        RedisStream,    // Redis Streams
-        gRPC            // gRPC
-    }
-
-    /// <summary>
-    /// 통합 상태
-    /// </summary>
-    public enum IntegrationStatus
-    {
-        Active,         // 활성
-        Inactive,       // 비활성
-        Error,          // 오류
-        Maintenance     // 유지보수
-    }
 }

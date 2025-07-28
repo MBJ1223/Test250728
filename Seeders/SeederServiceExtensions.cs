@@ -13,13 +13,14 @@ namespace BODA.FMS.MES.Data.Seeders
         public static IServiceCollection AddMesSeeders(this IServiceCollection services)
         {
             // 개별 시더 등록
-            //services.AddScoped<ProductSeeder>();
-            services.AddScoped<WorkScenarioSeeder>();
-            //services.AddScoped<SystemIntegrationSeeder>();
-            //services.AddScoped<SampleDataSeeder>();
+            services.AddScoped<ProductSeeder>();
+            services.AddScoped<LocationPalletSeeder>();
+            services.AddScoped<SystemIntegrationSeeder>();
+            // WorkScenarioSeeder 제거됨
+            // services.AddScoped<SampleDataSeeder>(); // WorkScenario 의존성으로 인해 제거
 
             // 메인 시더 등록
-            //services.AddScoped<MesDataSeeder>();
+            services.AddScoped<MesDataSeeder>();
 
             return services;
         }

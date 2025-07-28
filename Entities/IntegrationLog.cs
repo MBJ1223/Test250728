@@ -83,15 +83,4 @@ namespace BODA.FMS.MES.Data.Entities
         /// </summary>
         public JsonDocument? Metadata { get; set; }
     }
-
-    /// <summary>
-    /// 통합 결과
-    /// </summary>
-    public enum IntegrationResult
-    {
-        Success,        // 성공
-        Failed,         // 실패
-        Timeout,        // 타임아웃
-        Cancelled       // 취소됨
-    }
 }

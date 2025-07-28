@@ -10,11 +10,15 @@ namespace BODA.FMS.MES.Data.Repositories
     {
         // Repositories
         IProductRepository Products { get; }
-        IWorkScenarioRepository WorkScenarios { get; }
+        IProductStockRepository ProductStocks { get; }
+        IRecipeRepository Recipes { get; }
         IWorkOrderRepository WorkOrders { get; }
-        IWorkOrderExecutionRepository WorkOrderExecutions { get; }
+        IProcessExecutionRepository ProcessExecutions { get; }
+        ILocationRepository Locations { get; }
+        IPalletRepository Pallets { get; }
         ISystemIntegrationRepository SystemIntegrations { get; }
         IExecutionLogRepository ExecutionLogs { get; }
+        IIntegrationLogRepository IntegrationLogs { get; }
 
         // Transaction Management
         Task<int> SaveChangesAsync();

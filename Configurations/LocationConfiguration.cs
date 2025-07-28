@@ -7,101 +7,88 @@ namespace BODA.FMS.MES.Data.Configurations
     /// <summary>
     /// Location 엔티티 설정
     /// </summary>
-    public class LocationConfiguration : IEntityTypeConfiguration<Location>
+    namespace BODA.FMS.MES.Data.Configurations
     {
-        public void Configure(EntityTypeBuilder<Location> builder)
+        /// <summary>
+        /// Location 엔티티 설정
+        /// </summary>
+        public class LocationConfiguration : BaseEntityConfiguration<Location>
         {
-            // 테이블 설정
-            builder.ToTable("Locations", table => table.HasComment("위치 정보 테이블"));
+            public override void Configure(EntityTypeBuilder<Location> builder)
+            {
+                base.Configure(builder);
 
-            // 기본 키
-            builder.HasKey(e => e.Id);
+                // 테이블 설정
+                builder.ToTable("Locations", table => table.HasComment("위치 정보 테이블"));
 
-            // 속성 설정
-            builder.Property(e => e.LocationCode)
-                .IsRequired()
-                .HasMaxLength(50)
-                .HasComment("위치 코드");
+                // 속성 설정
+                builder.Property(e => e.LocationCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasComment("위치 코드");
 
-            builder.Property(e => e.LocationName)
-                .IsRequired()
-                .HasMaxLength(200)
-                .HasComment("위치 명칭");
+                builder.Property(e => e.LocationName)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasComment("위치 명칭");
 
-            builder.Property(e => e.LocationType)
-                .IsRequired()
-                .HasConversion<string>()
-                .HasMaxLength(50)
-                .HasComment("위치 타입");
+                builder.Property(e => e.LocationType)
+                    .IsRequired()
+                    .HasConversion<string>()
+                    .HasMaxLength(50)
+                    .HasComment("위치 타입");
 
-            builder.Property(e => e.ParentLocationId)
-                .HasComment("상위 위치 ID");
+                builder.Property(e => e.ParentLocationId)
+                    .HasComment("상위 위치 ID");
 
-            builder.Property(e => e.MaxCapacity)
-                .IsRequired()
-                .HasDefaultValue(1)
-                .HasComment("최대 팔레트 수용 용량");
+                builder.Property(e => e.MaxCapacity)
+                    .IsRequired()
+                    .HasDefaultValue(1)
+                    .HasComment("최대 팔레트 수용 용량");
 
-            builder.Property(e => e.CurrentCount)
-                .IsRequired()
-                .HasDefaultValue(0)
-                .HasComment("현재 팔레트 수량");
+                builder.Property(e => e.CurrentCount)
+                    .IsRequired()
+                    .HasDefaultValue(0)
+                    .HasComment("현재 팔레트 수량");
 
-            builder.Property(e => e.CoordinateX)
-                .HasPrecision(10, 2)
-                .HasComment("X 좌표");
+                builder.Property(e => e.CoordinateX)
+                    .HasPrecision(10, 2)
+                    .HasComment("X 좌표");
 
-            builder.Property(e => e.CoordinateY)
-                .HasPrecision(10, 2)
-                .HasComment("Y 좌표");
+                builder.Property(e => e.CoordinateY)
+                    .HasPrecision(10, 2)
+                    .HasComment("Y 좌표");
 
-            builder.Property(e => e.CoordinateZ)
-                .HasPrecision(10, 2)
-                .HasComment("Z 좌표 (높이)");
+                builder.Property(e => e.CoordinateZ)
+                    .HasPrecision(10, 2)
+                    .HasComment("Z 좌표 (높이)");
 
-            builder.Property(e => e.IsActive)
-                .IsRequired()
-                .HasDefaultValue(true)
-                .HasComment("활성 상태");
+                builder.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true)
+                    .HasComment("활성 상태");
 
-            builder.Property(e => e.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasComment("생성일시");
+                // 인덱스 설정
+                builder.HasIndex(e => e.LocationCode)
+                    .IsUnique()
+                    .HasDatabaseName("idx_locations_code");
 
-            builder.Property(e => e.UpdatedAt)
-                .HasComment("수정일시");
+                builder.HasIndex(e => e.LocationType)
+                    .HasDatabaseName("idx_locations_type");
 
-            // 인덱스 설정
-            builder.HasIndex(e => e.LocationCode)
-                .IsUnique()
-                .HasDatabaseName("idx_locations_code");
+                builder.HasIndex(e => e.IsActive)
+                    .HasDatabaseName("idx_locations_active");
 
-            builder.HasIndex(e => e.LocationType)
-                .HasDatabaseName("idx_locations_type");
+                builder.HasIndex(e => e.ParentLocationId)
+                    .HasDatabaseName("idx_locations_parent")
+                    .HasFilter("ParentLocationId IS NOT NULL");
 
-            builder.HasIndex(e => e.IsActive)
-                .HasDatabaseName("idx_locations_active");
-
-            builder.HasIndex(e => e.ParentLocationId)
-                .HasDatabaseName("idx_locations_parent")
-                .HasFilter("ParentLocationId IS NOT NULL");
-
-            // 관계 설정
-            builder.HasOne(e => e.ParentLocation)
-                .WithMany(p => p.SubLocations)
-                .HasForeignKey(e => e.ParentLocationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(e => e.SubLocations)
-                .WithOne(s => s.ParentLocation)
-                .HasForeignKey(s => s.ParentLocationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(e => e.PalletLocations)
-                .WithOne(p => p.Location)
-                .HasForeignKey(p => p.LocationId)
-                .OnDelete(DeleteBehavior.Restrict);
+                // 관계 설정
+                builder.HasOne(e => e.ParentLocation)
+                    .WithMany(p => p.SubLocations)
+                    .HasForeignKey(e => e.ParentLocationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            }
         }
     }
 }

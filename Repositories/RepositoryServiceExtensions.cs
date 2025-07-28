@@ -17,11 +17,15 @@ namespace BODA.FMS.MES.Data.Repositories
 
             // Individual Repositories
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IWorkScenarioRepository, WorkScenarioRepository>();
+            services.AddScoped<IProductStockRepository, ProductStockRepository>();
+            services.AddScoped<IRecipeRepository, RecipeRepository>();
             services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
-            services.AddScoped<IWorkOrderExecutionRepository, WorkOrderExecutionRepository>();
+            services.AddScoped<IProcessExecutionRepository, ProcessExecutionRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IPalletRepository, PalletRepository>();
             services.AddScoped<ISystemIntegrationRepository, SystemIntegrationRepository>();
             services.AddScoped<IExecutionLogRepository, ExecutionLogRepository>();
+            services.AddScoped<IIntegrationLogRepository, IntegrationLogRepository>();
 
             // Generic Repository
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));

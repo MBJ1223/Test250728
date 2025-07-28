@@ -9,7 +9,7 @@ using BODA.FMS.MES.Data.Entities;
 namespace BODA.FMS.MES.Data.Seeders
 {
     /// <summary>
-    /// 제품 데이터 시더
+    /// 제품 및 레시피 데이터 시더
     /// </summary>
     public class ProductSeeder : IDataSeeder
     {
@@ -26,167 +26,323 @@ namespace BODA.FMS.MES.Data.Seeders
 
         public async Task<bool> HasDataAsync()
         {
-            return await _context.Products.AnyAsync();
+            return await _context.Products.AnyAsync() || await _context.Recipes.AnyAsync();
         }
 
         public async Task SeedAsync()
         {
             if (await HasDataAsync())
             {
-                _logger.LogInformation("제품 데이터가 이미 존재합니다.");
+                _logger.LogInformation("제품 및 레시피 데이터가 이미 존재합니다.");
                 return;
             }
 
-            _logger.LogInformation("제품 데이터 시딩 시작...");
+            _logger.LogInformation("제품 및 레시피 데이터 시딩 시작...");
 
-            //var products = new[]
-            //{
-            //    new Product
-            //    {
-            //        ProductCode = "DEMO-PART-001",
-            //        ProductName = "데모 부품 A형",
-            //        Specification = "용접 및 볼팅이 필요한 기본 부품",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Product,
-            //        StandardWorkTime = 30, // 30분
-            //        IsActive = true,
-            //        BomData = JsonSerializer.SerializeToDocument(new
-            //        {
-            //            materials = new[]
-            //            {
-            //                new { code = "MAT-001", name = "기본 프레임", quantity = 1 },
-            //                new { code = "MAT-002", name = "연결 부품", quantity = 4 },
-            //                new { code = "MAT-003", name = "볼트셋", quantity = 8 }
-            //            },
-            //            processes = new[]
-            //            {
-            //                new { sequence = 1, process = "용접", duration = 15 },
-            //                new { sequence = 2, process = "볼팅", duration = 10 },
-            //                new { sequence = 3, process = "검사", duration = 5 }
-            //            }
-            //        }),
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "DEMO-PART-002",
-            //        ProductName = "데모 부품 B형",
-            //        Specification = "용접 전용 부품",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Product,
-            //        StandardWorkTime = 20, // 20분
-            //        IsActive = true,
-            //        BomData = JsonSerializer.SerializeToDocument(new
-            //        {
-            //            materials = new[]
-            //            {
-            //                new { code = "MAT-001", name = "기본 프레임", quantity = 1 },
-            //                new { code = "MAT-004", name = "용접 플레이트", quantity = 2 }
-            //            },
-            //            processes = new[]
-            //            {
-            //                new { sequence = 1, process = "용접", duration = 15 },
-            //                new { sequence = 2, process = "검사", duration = 5 }
-            //            }
-            //        }),
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "DEMO-ASSY-001",
-            //        ProductName = "데모 조립품",
-            //        Specification = "A형과 B형을 조합한 최종 제품",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Product,
-            //        StandardWorkTime = 60, // 60분
-            //        IsActive = true,
-            //        BomData = JsonSerializer.SerializeToDocument(new
-            //        {
-            //            materials = new[]
-            //            {
-            //                new { code = "DEMO-PART-001", name = "데모 부품 A형", quantity = 2 },
-            //                new { code = "DEMO-PART-002", name = "데모 부품 B형", quantity = 1 },
-            //                new { code = "MAT-005", name = "최종 조립 키트", quantity = 1 }
-            //            },
-            //            processes = new[]
-            //            {
-            //                new { sequence = 1, process = "부품 준비", duration = 10 },
-            //                new { sequence = 2, process = "조립", duration = 30 },
-            //                new { sequence = 3, process = "최종 검사", duration = 20 }
-            //            }
-            //        }),
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    // 원자재
-            //    new Product
-            //    {
-            //        ProductCode = "MAT-001",
-            //        ProductName = "기본 프레임",
-            //        Specification = "표준 철제 프레임",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Material,
-            //        StandardWorkTime = 0,
-            //        IsActive = true,
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "MAT-002",
-            //        ProductName = "연결 부품",
-            //        Specification = "프레임 연결용 부품",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Material,
-            //        StandardWorkTime = 0,
-            //        IsActive = true,
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "MAT-003",
-            //        ProductName = "볼트셋",
-            //        Specification = "M10 볼트 및 너트 세트",
-            //        Unit = "SET",
-            //        ProductType = ProductType.Material,
-            //        StandardWorkTime = 0,
-            //        IsActive = true,
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "MAT-004",
-            //        ProductName = "용접 플레이트",
-            //        Specification = "용접용 철판",
-            //        Unit = "EA",
-            //        ProductType = ProductType.Material,
-            //        StandardWorkTime = 0,
-            //        IsActive = true,
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    },
-            //    new Product
-            //    {
-            //        ProductCode = "MAT-005",
-            //        ProductName = "최종 조립 키트",
-            //        Specification = "나사, 와셔, 기타 조립 부품",
-            //        Unit = "SET",
-            //        ProductType = ProductType.Material,
-            //        StandardWorkTime = 0,
-            //        IsActive = true,
-            //        CreatedBy = "System",
-            //        CreatedAt = DateTime.UtcNow
-            //    }
-            //};
+            // 레시피 생성
+            var weldingRecipe = await CreateWeldingRecipeAsync();
+            var boltingRecipe = await CreateBoltingRecipeAsync();
 
-            //await _context.Products.AddRangeAsync(products);
-            //await _context.SaveChangesAsync();
+            // 제품 생성
+            var products = new[]
+            {
+                new Product
+                {
+                    ProductCode = "WD-001",
+                    ProductName = "용접 제품 A",
+                    Specification = "표준 용접 제품",
+                    Unit = "EA",
+                    ProductType = ProductType.WeldingProduct,
+                    RecipeId = weldingRecipe.Id,
+                    IsActive = true,
+                    AdditionalData = JsonSerializer.SerializeToDocument(new
+                    {
+                        weight = 2.5,
+                        dimensions = new { length = 300, width = 200, height = 150 },
+                        material = "Carbon Steel"
+                    }),
+                    CreatedBy = "System",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Product
+                {
+                    ProductCode = "BT-001",
+                    ProductName = "볼팅 제품 A",
+                    Specification = "표준 볼팅 제품",
+                    Unit = "EA",
+                    ProductType = ProductType.BoltingProduct,
+                    RecipeId = boltingRecipe.Id,
+                    IsActive = true,
+                    AdditionalData = JsonSerializer.SerializeToDocument(new
+                    {
+                        weight = 1.8,
+                        dimensions = new { length = 250, width = 180, height = 120 },
+                        boltCount = 8,
+                        boltSize = "M10"
+                    }),
+                    CreatedBy = "System",
+                    CreatedAt = DateTime.UtcNow
+                },
+                // 원자재
+                new Product
+                {
+                    ProductCode = "MAT-WD-001",
+                    ProductName = "용접 원자재",
+                    Specification = "용접용 철판",
+                    Unit = "EA",
+                    ProductType = ProductType.WeldingMaterial,
+                    IsActive = true,
+                    CreatedBy = "System",
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Product
+                {
+                    ProductCode = "MAT-BT-001",
+                    ProductName = "볼팅 원자재",
+                    Specification = "볼팅용 프레임",
+                    Unit = "EA",
+                    ProductType = ProductType.BoltingMaterial,
+                    IsActive = true,
+                    CreatedBy = "System",
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
 
-            //_logger.LogInformation($"제품 데이터 {products.Length}개 시딩 완료");
+            await _context.Products.AddRangeAsync(products);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"제품 데이터 {products.Length}개 시딩 완료");
+        }
+
+        private async Task<Recipe> CreateWeldingRecipeAsync()
+        {
+            var recipe = new Recipe
+            {
+                RecipeCode = "RCP-WD-001",
+                RecipeName = "표준 용접 공정",
+                ProductType = ProductType.WeldingProduct,
+                Description = "용접 제품을 위한 표준 공정",
+                Version = "1.0.0",
+                IsActive = true,
+                TotalEstimatedMinutes = 40,
+                Parameters = JsonSerializer.SerializeToDocument(new
+                {
+                    weldingType = "MIG",
+                    temperature = 1500,
+                    wireThickness = 1.2
+                }),
+                CreatedBy = "System"
+            };
+
+            await _context.Recipes.AddAsync(recipe);
+            await _context.SaveChangesAsync();
+
+            // 레시피 단계 추가
+            var steps = new[]
+            {
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 1,
+                    StepName = "입고 위치에서 픽업",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "IB-01,IB-02,IB-03",
+                    TargetLocation = "WZ-01",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true,
+                    Parameters = JsonSerializer.SerializeToDocument(new
+                    {
+                        transportMode = "AMR",
+                        priority = "normal"
+                    })
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 2,
+                    StepName = "대기 구역으로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "WZ-01",
+                    TargetLocation = "WELD-01",
+                    EstimatedMinutes = 3,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 3,
+                    StepName = "용접 작업",
+                    ProcessType = ProcessType.Process,
+                    RequiredStationType = StationType.WeldingStation,
+                    ValidStartLocations = "WELD-01",
+                    TargetLocation = "WELD-01",
+                    EstimatedMinutes = 20,
+                    TimeoutMinutes = 30,
+                    IsMandatory = true,
+                    Parameters = JsonSerializer.SerializeToDocument(new
+                    {
+                        weldingProgram = "PROG_001",
+                        qualityCheck = true
+                    })
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 4,
+                    StepName = "검사 구역으로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "WELD-01",
+                    TargetLocation = "QC-01",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 5,
+                    StepName = "품질 검사",
+                    ProcessType = ProcessType.Inspection,
+                    RequiredStationType = StationType.InspectionStation,
+                    ValidStartLocations = "QC-01",
+                    TargetLocation = "QC-01",
+                    EstimatedMinutes = 10,
+                    TimeoutMinutes = 15,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 6,
+                    StepName = "출고 위치로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "QC-01",
+                    TargetLocation = "OB-01",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                }
+            };
+
+            await _context.RecipeSteps.AddRangeAsync(steps);
+            await _context.SaveChangesAsync();
+
+            return recipe;
+        }
+
+        private async Task<Recipe> CreateBoltingRecipeAsync()
+        {
+            var recipe = new Recipe
+            {
+                RecipeCode = "RCP-BT-001",
+                RecipeName = "표준 볼팅 공정",
+                ProductType = ProductType.BoltingProduct,
+                Description = "볼팅 제품을 위한 표준 공정",
+                Version = "1.0.0",
+                IsActive = true,
+                TotalEstimatedMinutes = 35,
+                Parameters = JsonSerializer.SerializeToDocument(new
+                {
+                    boltType = "M10",
+                    torqueSpec = 45,
+                    boltCount = 8
+                }),
+                CreatedBy = "System"
+            };
+
+            await _context.Recipes.AddAsync(recipe);
+            await _context.SaveChangesAsync();
+
+            // 레시피 단계 추가
+            var steps = new[]
+            {
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 1,
+                    StepName = "입고 위치에서 픽업",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "IB-01,IB-02,IB-03",
+                    TargetLocation = "WZ-02",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 2,
+                    StepName = "볼팅 스테이션으로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "WZ-02",
+                    TargetLocation = "BOLT-01",
+                    EstimatedMinutes = 3,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 3,
+                    StepName = "볼팅 작업",
+                    ProcessType = ProcessType.Process,
+                    RequiredStationType = StationType.BoltingStation,
+                    ValidStartLocations = "BOLT-01",
+                    TargetLocation = "BOLT-01",
+                    EstimatedMinutes = 15,
+                    TimeoutMinutes = 25,
+                    IsMandatory = true,
+                    Parameters = JsonSerializer.SerializeToDocument(new
+                    {
+                        boltingProgram = "BOLT_PROG_001",
+                        torqueVerification = true
+                    })
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 4,
+                    StepName = "검사 구역으로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "BOLT-01",
+                    TargetLocation = "QC-02",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 5,
+                    StepName = "품질 검사",
+                    ProcessType = ProcessType.Inspection,
+                    RequiredStationType = StationType.InspectionStation,
+                    ValidStartLocations = "QC-02",
+                    TargetLocation = "QC-02",
+                    EstimatedMinutes = 8,
+                    TimeoutMinutes = 15,
+                    IsMandatory = true
+                },
+                new RecipeStep
+                {
+                    RecipeId = recipe.Id,
+                    StepNumber = 6,
+                    StepName = "출고 위치로 이동",
+                    ProcessType = ProcessType.Transport,
+                    ValidStartLocations = "QC-02",
+                    TargetLocation = "OB-01",
+                    EstimatedMinutes = 5,
+                    TimeoutMinutes = 10,
+                    IsMandatory = true
+                }
+            };
+
+            await _context.RecipeSteps.AddRangeAsync(steps);
+            await _context.SaveChangesAsync();
+
+            return recipe;
         }
     }
 }

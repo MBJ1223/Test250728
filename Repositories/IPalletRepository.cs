@@ -8,8 +8,16 @@ namespace BODA.FMS.MES.Data.Repositories
     /// <summary>
     /// Pallet Repository 인터페이스
     /// </summary>
-    public interface IPalletRepository : IBaseRepository<Pallet>
+    public interface IPalletRepository
     {
+        // 기본 CRUD
+        Task<Pallet?> GetByIdAsync(int id);
+        Task<IEnumerable<Pallet>> GetAllAsync();
+        Task<Pallet> AddAsync(Pallet entity);
+        Pallet Update(Pallet entity);
+        Task DeleteAsync(int id);
+        Task<int> SaveChangesAsync();
+
         // 팔레트 코드로 조회
         Task<Pallet?> GetByCodeAsync(string palletCode);
 

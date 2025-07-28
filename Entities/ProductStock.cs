@@ -26,7 +26,7 @@ namespace BODA.FMS.MES.Data.Entities
         /// <summary>
         /// 팔레트 ID
         /// </summary>
-        public int PalletId { get; set; }
+        public Guid PalletId { get; set; }
 
         /// <summary>
         /// 팔레트
@@ -41,7 +41,7 @@ namespace BODA.FMS.MES.Data.Entities
         /// <summary>
         /// 현재 위치 ID
         /// </summary>
-        public int CurrentLocationId { get; set; }
+        public Guid CurrentLocationId { get; set; }
 
         /// <summary>
         /// 현재 위치

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BODA.FMS.MES.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+69f26a7df9897dfec91d774f022e5a641722517f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41fff8cedd24a5673326f8de1dfc894221e75283")]
 [assembly: System.Reflection.AssemblyProductAttribute("BODA.FMS.MES.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BODA.FMS.MES.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

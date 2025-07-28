@@ -9,10 +9,8 @@ namespace BODA.FMS.MES.Data.Entities
     /// <summary>
     /// 위치 엔티티
     /// </summary>
-    public class Location
+    public class Location : BaseEntity
     {
-        public int Id { get; set; }
-
         /// <summary>위치 코드 (예: A-01, B-02)</summary>
         public string LocationCode { get; set; } = string.Empty;
 
@@ -23,7 +21,7 @@ namespace BODA.FMS.MES.Data.Entities
         public LocationType LocationType { get; set; }
 
         /// <summary>상위 위치 ID (계층 구조)</summary>
-        public int? ParentLocationId { get; set; }
+        public Guid? ParentLocationId { get; set; }
 
         /// <summary>최대 팔레트 수용 용량</summary>
         public int MaxCapacity { get; set; }
@@ -42,12 +40,6 @@ namespace BODA.FMS.MES.Data.Entities
 
         /// <summary>활성 상태</summary>
         public bool IsActive { get; set; } = true;
-
-        /// <summary>생성일시</summary>
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        /// <summary>수정일시</summary>
-        public DateTime? UpdatedAt { get; set; }
 
         // Navigation Properties
         /// <summary>상위 위치</summary>

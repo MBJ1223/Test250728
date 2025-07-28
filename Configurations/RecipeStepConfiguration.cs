@@ -31,8 +31,9 @@ namespace BODA.FMS.MES.Data.Configurations
             builder.Property(e => e.ProcessType)
                 .ConfigureEnumAsString(50, "공정 타입");
 
+            // Nullable enum을 위한 수정된 설정
             builder.Property(e => e.RequiredStationType)
-                .ConfigureEnumAsString(50, "필요한 스테이션 타입");
+                .ConfigureNullableEnumAsString(50, "필요한 스테이션 타입");
 
             builder.Property(e => e.ValidStartLocations)
                 .IsOptionalString(500, "시작 가능 위치 (콤마 구분)");

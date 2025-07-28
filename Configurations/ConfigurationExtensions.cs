@@ -63,6 +63,27 @@ namespace BODA.FMS.MES.Data.Configurations
         }
 
         /// <summary>
+        /// Nullable Enum을 문자열로 저장하는 설정
+        /// </summary>
+        public static PropertyBuilder<TEnum?> ConfigureNullableEnumAsString<TEnum>(
+            this PropertyBuilder<TEnum?> propertyBuilder,
+            int maxLength = 50,
+            string? comment = null)
+            where TEnum : struct, Enum
+        {
+            propertyBuilder
+                .HasMaxLength(maxLength)
+                .HasConversion<string?>();
+
+            if (!string.IsNullOrEmpty(comment))
+            {
+                propertyBuilder.HasComment(comment);
+            }
+
+            return propertyBuilder;
+        }
+
+        /// <summary>
         /// 필수 문자열 속성 설정
         /// </summary>
         public static PropertyBuilder<string> IsRequiredString(

@@ -21,7 +21,7 @@ namespace BODA.FMS.MES.Data.Configurations
                 .HasComment("작업 지시 ID (선택적)");
 
             builder.Property(e => e.WorkOrderExecutionId)
-                .HasComment("작업 실행 ID (선택적)");
+                .HasComment("프로세스 실행 ID (선택적)");
 
             builder.Property(e => e.LogLevel)
                 .ConfigureEnumAsString(20, "로그 레벨")
@@ -97,10 +97,7 @@ namespace BODA.FMS.MES.Data.Configurations
                 .HasForeignKey(e => e.WorkOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(e => e.WorkOrderExecution)
-                .WithMany(ex => ex.Logs)
-                .HasForeignKey(e => e.WorkOrderExecutionId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // WorkOrderExecution은 MesDbContext에서 무시됨
         }
     }
 }
